@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+*.class
+*.jar
+*.log
+logs/
+.env
+# 本地真实配置文件，不提交
+application.yml
+
