@@ -1,0 +1,50 @@
+server:
+  port: 8080
+spring:
+  main:
+    banner-mode: off
+  ai:
+    openai:
+      base-url: https://api.deepseek.com
+      api-key: ${DEEPSEEK_API_KEY}
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.2
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: qwen3:4b-q4_K_M
+          temperature: 0.2
+    mcp:
+      client:
+        enabled: true
+        name: agent-workflow-client
+        version: 1.0.0
+        type: SYNC
+        sse:
+          connections:
+            agent-tools:
+              url: http://localhost:8081
+              sse-endpoint: /sse
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/agent_db?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      timeout: 3000ms
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+logging:
+  console:
+    enabled: true
+  file:
+    name: ./logs/agent-workflow.log

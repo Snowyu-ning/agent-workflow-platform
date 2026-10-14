@@ -37,6 +37,7 @@ build/
 *.log
 logs/
 .env
-# 本地真实配置文件，不提交
-application.yml
+# 禁止提交本地真实配置
+src/main/resources/application.yml
+
 

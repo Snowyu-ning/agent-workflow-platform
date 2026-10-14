@@ -1,6 +1,7 @@
-package com.zxr.agent.controller;
+package com.zxr.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/test")
 public class TestController {
 
-    private final ChatClient chatClient;
+    private final ChatClient deepSeekChatClient;
 
-    public TestController(ChatClient.Builder builder){
-        this.chatClient = builder.build();
+    public TestController(@Qualifier("deepSeekChatClient") ChatClient deepSeekChatClient){
+        this.deepSeekChatClient = deepSeekChatClient;
     }
 
     @GetMapping("/llm")
     public String testLlm(@RequestParam String input){
-        return chatClient.prompt()
+        return deepSeekChatClient.prompt()
                 .user(input)
                 .call()
                 .content();

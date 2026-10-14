@@ -1,4 +1,9 @@
 package com.zxr.task.mapper;
 
-public class AgentTaskMapper {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zxr.task.entity.AgentTask;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AgentTaskMapper extends BaseMapper<AgentTask> {
 }
