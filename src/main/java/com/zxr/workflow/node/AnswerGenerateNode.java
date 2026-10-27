@@ -3,13 +3,17 @@ package com.zxr.workflow.node;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.zxr.trace.annotation.AgentTrace;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.metadata.Usage;
 
 import java.util.Map;
 
 @Component
+@Slf4j
 public class AnswerGenerateNode implements NodeAction {
 
     private final ChatClient deepSeekChatClient;
@@ -42,7 +46,27 @@ public class AnswerGenerateNode implements NodeAction {
         4. 不要输出技术细节的原始数据，用人类能听懂的话说。
         """.formatted(userInput, toolOutput);
 
-        String answer = deepSeekChatClient.prompt().user(prompt).call().content();
+        ChatResponse response = deepSeekChatClient.prompt()
+                .user(prompt)
+                .call()
+                .chatResponse();
+
+        String answer = response.getResult().getOutput().getText();
+
+        // 获取当前的 taskId（前面 Worker 存进 State 的）
+        String taskId = (String) state.value("taskId").orElse("unknown");
+
+        Usage usage = response.getMetadata().getUsage();
+        if (usage != null) {
+            log.info("Token消耗统计】taskId={}, 输入: {}, 输出: {}, 总计: {}",
+                    taskId,
+                    usage.getPromptTokens(),
+                    usage.getCompletionTokens(),
+                    usage.getTotalTokens());
+        }  else {
+            log.info("【Token消耗统计】taskId={}, 当前模型未返回 Usage 数据", taskId);
+        }
+
         return Map.of("finalAnswer", answer);
     }
 }

@@ -48,3 +48,6 @@ logging:
     enabled: true
   file:
     name: ./logs/agent-workflow.log
+
+jwt:
+  secret: ${JWT_SECRET}
